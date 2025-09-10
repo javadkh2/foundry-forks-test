@@ -1,7 +1,10 @@
-import {Test, console} from "forge-std/Test.sol";
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.13;
+
+import {Script, console} from "forge-std/Script.sol";
 import {Counter} from "../src/Counter.sol";
 
-contract ChainwebPluginTest is Test {
+contract CounterScript is Script {
     uint256[] private _forks;
     uint24 private _numberOfForks = 2;
 
@@ -14,15 +17,16 @@ contract ChainwebPluginTest is Test {
         }
     }
 
-    function test_nonce_maintains_per_fork() public {
+    // after this I'd expect to see the same address printed twice
+    function run() public {
+
         for (uint24 i = 0; i < _numberOfForks; i++) {
             uint256 forkId = _forks[i];
             vm.selectFork(forkId);
-            // nonce should be 0 since this is the first transaction on this fork
-            assertEq(vm.getNonce(msg.sender), 0);
-            new Counter();
-            // nonce should be 1 after deploying the contract
-            assertEq(vm.getNonce(msg.sender), 1);
+            Counter c =   new Counter();
+            console.log("Counter deployed to:", address(c));
         }
+
+
     }
 }
